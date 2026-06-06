@@ -1,4 +1,4 @@
-package main.java.com.example.bff.controller;
+package com.example.bff.controller;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;

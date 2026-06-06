@@ -1,4 +1,4 @@
-package main.java.com.example.bff.config;
+package com.example.bff.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
