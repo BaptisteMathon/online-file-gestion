@@ -28,6 +28,12 @@ public class BffController {
                 .toEntity(String.class);
     }
 
+    @GetMapping("/me")
+    public java.util.Map<String, String> moi(@org.springframework.security.core.annotation.AuthenticationPrincipal org.springframework.security.oauth2.core.user.OAuth2User usr) {
+        String nom = usr.getAttribute("preferred_username");
+        return java.util.Map.of("nom", nom != null ? nom : usr.getName());
+    }
+
     @PostMapping
     public ResponseEntity<String> ajoutFich(@RequestParam("fich") MultipartFile fich,
             @RegisteredOAuth2AuthorizedClient("keycloak") OAuth2AuthorizedClient cl) {
