@@ -34,6 +34,26 @@ public class BffController {
         return java.util.Map.of("nom", nom != null ? nom : usr.getName());
     }
 
+    @GetMapping("/shared")
+    public ResponseEntity<String> recupPartages(@RegisteredOAuth2AuthorizedClient("keycloak") OAuth2AuthorizedClient cl) {
+        String tok = cl.getAccessToken().getTokenValue();
+        return rc.get()
+                .uri(urlApi + "/shared")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + tok)
+                .retrieve()
+                .toEntity(String.class);
+    }
+
+    @GetMapping("/{idF}/dl")
+    public ResponseEntity<byte[]> dlFich(@PathVariable Long idF, @RegisteredOAuth2AuthorizedClient("keycloak") OAuth2AuthorizedClient cl) {
+        String tok = cl.getAccessToken().getTokenValue();
+        return rc.get()
+                .uri(urlApi + "/" + idF + "/dl")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + tok)
+                .retrieve()
+                .toEntity(byte[].class);
+    }
+
     @PostMapping
     public ResponseEntity<String> ajoutFich(@RequestParam("fich") MultipartFile fich,
             @RegisteredOAuth2AuthorizedClient("keycloak") OAuth2AuthorizedClient cl) {
@@ -47,6 +67,16 @@ public class BffController {
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + tok)
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .body(corps)
+                .retrieve()
+                .toEntity(String.class);
+    }
+
+    @PostMapping("/{idF}/share")
+    public ResponseEntity<String> partagerFich(@PathVariable Long idF, @RequestParam("cible") String cible, @RegisteredOAuth2AuthorizedClient("keycloak") OAuth2AuthorizedClient cl) {
+        String tok = cl.getAccessToken().getTokenValue();
+        return rc.post()
+                .uri(urlApi + "/" + idF + "/share?cible=" + cible)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + tok)
                 .retrieve()
                 .toEntity(String.class);
     }

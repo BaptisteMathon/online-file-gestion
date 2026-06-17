@@ -1,7 +1,9 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.Fichier;
+import com.example.demo.entity.Partage;
 import com.example.demo.repository.FichierRepo;
+import com.example.demo.repository.PartageRepo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -60,5 +62,34 @@ public class FichierCtrl {
             fichPhys.delete();
         }
         repoFich.delete(f);
+    }
+
+    @Autowired
+    private PartageRepo repoPart;
+
+    @PostMapping("/{idF}/share")
+    public void partagerFich(@PathVariable Long idF, @RequestParam("cible") String cible) {
+        Partage p = new Partage(idF, cible);
+        repoPart.save(p);
+    }
+
+    @GetMapping("/shared")
+    public List<Fichier> recupPartages(@AuthenticationPrincipal Jwt jwt) {
+        String monNom = jwt.getClaimAsString("preferred_username");
+        List<Partage> parts = repoPart.findByCible(monNom);
+        return parts.stream()
+                .map(p -> repoFich.findById(p.getFichId()).orElse(null))
+                .filter(f -> f != null)
+                .toList();
+    }
+
+    @GetMapping("/{idF}/dl")
+    public org.springframework.http.ResponseEntity<byte[]> dlFich(@PathVariable Long idF) throws java.io.IOException {
+        Fichier f = repoFich.findById(idF).orElseThrow();
+        java.nio.file.Path chm = java.nio.file.Paths.get(f.getPathFich());
+        byte[] oct = java.nio.file.Files.readAllBytes(chm);
+        return org.springframework.http.ResponseEntity.ok()
+                .header(org.springframework.http.HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + f.getNameFich() + "\"")
+                .body(oct);
     }
 }
