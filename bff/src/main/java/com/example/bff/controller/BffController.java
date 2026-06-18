@@ -61,17 +61,17 @@ public class BffController {
                 .toEntity(byte[].class);
     }
 
-    @GetMapping("/api/users")
+    @GetMapping("/users")
     public List<Map<String, String>> getAllUsers() {
         Keycloak keycloak = KeycloakBuilder.builder()
                 .serverUrl("http://localhost:8080")          
-                .realm("mira-realm")                         
-                .clientId("bff-admin-client")
-                .clientSecret("VOTRE_SECRET_COPIE_A_L_ETAPE_1")
+                .realm("gestion-fichiers")                         
+                .clientId("bff2-admin-client")
+                .clientSecret("VXLAttBFdZJNGngyFHaHlNWnqdrnokau")
                 .grantType("client_credentials")
                 .build();
 
-        List<UserRepresentation> masterUsers = keycloak.realm("mira-realm").users().list();
+        List<UserRepresentation> masterUsers = keycloak.realm("gestion-fichiers").users().list();
 
         return masterUsers.stream().map(user -> Map.of(
                 "id", user.getId(),

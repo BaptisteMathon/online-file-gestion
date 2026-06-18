@@ -17,7 +17,7 @@ function App() {
   }, [])
 
   useEffect(() => {
-    fetch('http://localhost:8081/api/users') 
+    fetch('http://localhost:8081/api/my-files/users') 
         .then(response => {
             if (!response.ok) {
                 throw new Error("Impossible de récupérer la liste des utilisateurs");
@@ -88,7 +88,7 @@ function App() {
 
   const btnPart = (idF) => {
     setFichPart(idF)
-    setUsrCb(listU[0])
+    setUsrCb(listU.length > 0 ? listU[0].id : '')
   }
 
   const valPart = () => {
@@ -158,7 +158,7 @@ function App() {
 
                 {fichPart === f.id ? (
                   <div style={{ marginRight: '10px' }}>
-                    <select onChange={(e) => setSelectUser(e.target.value)}>
+                    <select value={usrCb} onChange={(e) => setUsrCb(e.target.value)}>
                         <option value="">-- Sélectionner un destinataire --</option>
                         {listU.map((user) => (
                             <option key={user.id} value={user.id}>
