@@ -8,13 +8,27 @@ function App() {
   const [isCo, setIsCo] = useState(false)
   const [nomU, setNomU] = useState('')
 
-  const [listU] = useState(['admin1', 'user1'])
+  const [listU, setListU] = useState([]);
   const [fichPart, setFichPart] = useState(null)
   const [usrCb, setUsrCb] = useState('admin1')
 
   useEffect(() => {
     recupFich()
   }, [])
+
+  useEffect(() => {
+    fetch('http://localhost:8081/api/users') 
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Impossible de récupérer la liste des utilisateurs");
+            }
+            return response.json();
+        })
+        .then(data => {
+            setListU(data); 
+        })
+        .catch(error => console.error("Erreur d'API :", error));
+  }, []);
 
   const recupFich = () => {
     axios.get('http://localhost:8081/api/my-files', { withCredentials: true })
@@ -144,10 +158,13 @@ function App() {
 
                 {fichPart === f.id ? (
                   <div style={{ marginRight: '10px' }}>
-                    <select value={usrCb} onChange={(e) => setUsrCb(e.target.value)} style={{ marginRight: '5px', padding: '4px' }}>
-                      {listU.map(u => (
-                        <option key={u} value={u}>{u}</option>
-                      ))}
+                    <select onChange={(e) => setSelectUser(e.target.value)}>
+                        <option value="">-- Sélectionner un destinataire --</option>
+                        {listU.map((user) => (
+                            <option key={user.id} value={user.id}>
+                                {user.username}
+                            </option>
+                        ))}
                     </select>
                     <button onClick={valPart} style={{ color: 'white', backgroundColor: '#2ed573', border: 'none', cursor: 'pointer', padding: '5px 10px', borderRadius: '3px', marginRight: '5px' }}>OK</button>
                     <button onClick={annPart} style={{ color: 'white', backgroundColor: '#a4b0be', border: 'none', cursor: 'pointer', padding: '5px 10px', borderRadius: '3px' }}>Annuler</button>

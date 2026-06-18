@@ -10,6 +10,13 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.multipart.MultipartFile;
+import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.KeycloakBuilder;
+import org.keycloak.representations.idm.UserRepresentation;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/my-files")
@@ -52,6 +59,24 @@ public class BffController {
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + tok)
                 .retrieve()
                 .toEntity(byte[].class);
+    }
+
+    @GetMapping("/api/users")
+    public List<Map<String, String>> getAllUsers() {
+        Keycloak keycloak = KeycloakBuilder.builder()
+                .serverUrl("http://localhost:8080")          
+                .realm("mira-realm")                         
+                .clientId("bff-admin-client")
+                .clientSecret("VOTRE_SECRET_COPIE_A_L_ETAPE_1")
+                .grantType("client_credentials")
+                .build();
+
+        List<UserRepresentation> masterUsers = keycloak.realm("mira-realm").users().list();
+
+        return masterUsers.stream().map(user -> Map.of(
+                "id", user.getId(),
+                "username", user.getUsername()
+        )).collect(Collectors.toList());
     }
 
     @PostMapping
