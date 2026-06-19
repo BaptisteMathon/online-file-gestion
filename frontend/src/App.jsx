@@ -84,7 +84,7 @@ function App() {
 
   const btnPart = (idF) => {
     setFichPart(idF)
-    setUsrCb(listU.length > 0 ? listU[0].id : '')
+    setUsrCb(listU.length > 0 ? listU[0].username : '')
   }
 
   const valPart = () => {
@@ -157,7 +157,7 @@ function App() {
                     <select value={usrCb} onChange={(e) => setUsrCb(e.target.value)}>
                         <option value="">-- Sélectionner un destinataire --</option>
                         {listU.map((user) => (
-                            <option key={user.id} value={user.id}>
+                            <option key={user.id} value={user.username}>
                                 {user.username}
                             </option>
                         ))}
