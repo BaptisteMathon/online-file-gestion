@@ -17,17 +17,13 @@ function App() {
   }, [])
 
   useEffect(() => {
-    fetch('http://localhost:8081/api/my-files/users') 
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("Impossible de récupérer la liste des utilisateurs");
-            }
-            return response.json();
-        })
-        .then(data => {
-            setListU(data); 
-        })
-        .catch(error => console.error("Erreur d'API :", error));
+    axios.get('http://localhost:8081/api/my-files/users', { withCredentials: true })
+      .then(res => {
+        setListU(res.data);
+      })
+      .catch(error => {
+        console.error("Erreur lors de la récupération des utilisateurs :", error);
+      });
   }, []);
 
   const recupFich = () => {
